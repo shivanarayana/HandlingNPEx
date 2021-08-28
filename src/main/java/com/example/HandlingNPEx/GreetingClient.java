@@ -18,7 +18,7 @@ public class GreetingClient {
         this.client = builder.baseUrl("http://localhost:8080").build();
     }
 
-    public Mono<String> getMessage() {
+    public Mono<String> getMessageMono() {
         return this.client.get().uri("/mono").accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(Greeting.class)
@@ -31,4 +31,18 @@ public class GreetingClient {
                 .bodyToFlux(Greeting.class)
                 .map(Greeting::getMessage);
     }
+
+//    public Flux<String> getMessageReturn() {
+//        return this.client.get().uri("/onReturn").accept(MediaType.APPLICATION_JSON)
+//                .retrieve()
+//                .bodyToFlux(Greeting.class)
+//                .map(Greeting::getMessage);
+//    }
+//
+//    public Flux<String> getMessageResume() {
+//        return this.client.get().uri("/onResume").accept(MediaType.APPLICATION_JSON)
+//                .retrieve()
+//                .bodyToFlux(Greeting.class)
+//                .map(Greeting::getMessage);
+//    }
 }
