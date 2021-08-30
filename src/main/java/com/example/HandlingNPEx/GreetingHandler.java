@@ -6,11 +6,11 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.Optional;
+import java.io.IOException;
+
+import static reactor.core.publisher.Mono.*;
 
 @Component
 public class GreetingHandler {
@@ -34,10 +34,10 @@ public class GreetingHandler {
 //        return Mono.just("Hello, " + queryparam.orElseGet(null));
 
         if(!request.queryParam("name").isPresent()){
-            return Mono.just("Failed Name");
+            return Mono.<String>error(IOException::new); //Mono.justOrEmpty(Optional.ofNullable(null));
         }
 
-        return Mono.justOrEmpty("Hello, " + request.queryParam("name").orElseGet(null));
+        return justOrEmpty("Hello, " + request.queryParam("name").get());
         //...
     }
 
@@ -54,7 +54,7 @@ public class GreetingHandler {
                 .flatMap(s -> ServerResponse.ok()
                         .contentType(MediaType.TEXT_PLAIN)
                         .bodyValue(s))
-                .onErrorResume(e -> Mono.just("Hey! onErrorResume Handle: Sorry there is an Error " + e.getMessage())
+                .onErrorResume(e -> just("Hey! onErrorResume Handle: Sorry there is an Error " + e.getMessage())
                         .flatMap(s -> ServerResponse.ok()
                                 .contentType(MediaType.TEXT_PLAIN)
                                 .bodyValue(s)));
