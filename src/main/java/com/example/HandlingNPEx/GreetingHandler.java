@@ -9,8 +9,11 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+
+import static reactor.core.publisher.Mono.justOrEmpty;
 
 @Component
 public class GreetingHandler {
@@ -34,10 +37,10 @@ public class GreetingHandler {
 //        return Mono.just("Hello, " + queryparam.orElseGet(null));
 
         if(!request.queryParam("name").isPresent()){
-            return Mono.just("Failed Name");
+            return Mono.<String>error(IOException::new); //Mono.justOrEmpty(Optional.ofNullable(null));
         }
 
-        return Mono.justOrEmpty("Hello, " + request.queryParam("name").orElseGet(null));
+        return justOrEmpty("Hello, " + request.queryParam("name").get());
         //...
     }
 
