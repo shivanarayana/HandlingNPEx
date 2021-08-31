@@ -12,6 +12,8 @@ import java.util.Optional;
 public class HandlingNpExApplication {
 
 	public static void main(String[] args) {
+		int a = 5;
+
 		ConfigurableApplicationContext context = SpringApplication.run(HandlingNpExApplication.class, args);
 
 		GreetingClient greetingClient = context.getBean(GreetingClient.class);
@@ -40,5 +42,21 @@ public class HandlingNpExApplication {
 		Optional<String> optional3 = Optional.empty();
 		Mono.justOrEmpty(optional3)
 				.subscribe(System.out::println);
+
+		System.out.println("-- Creating MonoJust and MonoDefer Differences --");
+
+		Mono<Integer> monoJust = Mono.just(a);
+		int finalA = a;
+		Mono<Integer> monoDefer = Mono.defer(() -> Mono.just(finalA));
+
+		monoJust.subscribe(integer1 -> System.out.println(integer1));
+		monoDefer.subscribe(integer1 -> System.out.println(integer1));
+
+		a = 7;
+		monoJust.subscribe(integer1 -> System.out.println(integer1));
+		monoDefer.subscribe(integer1 -> System.out.println(integer1));
+
+		System.out.println("-- Here MonoJust() Took variable in cache/final value which is using eager initialized earlier " +
+				"but defer() took recent value because it uses lazy values--");
 	}
 }
